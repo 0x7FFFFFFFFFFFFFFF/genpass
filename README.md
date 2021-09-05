@@ -1,9 +1,8 @@
-# genpass [![builds.sr.ht status](https://builds.sr.ht/~cyplo/genpass.svg)](https://builds.sr.ht/~cyplo/genpass?) [![dependency status](https://deps.rs/repo/github/cyplo/genpass/status.svg)](https://deps.rs/repo/github/cyplo/genpass) [![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/cyplo/donate)
+# genpass
 
-A simple yet robust commandline random password generator.
+This is a fork from [https://builds.sr.ht/~cyplo/genpass](https://builds.sr.ht/~cyplo/genpass). The following description is for this forked version.
 
-Multiplatform (Linux, Mac, Windows).
-Fast.
+A simple, robust, fast, multiplatform commandline random password generator.
 
 You can use it generate keys or passwords in scripts or use it as your primary desktop password generator.
 
@@ -17,52 +16,46 @@ genpass --passphrase 128 # generate longer passphrase
 genpass -dlu             # no special characters
 ```
 
-### Generating a password directly into your system clipboard
+## Copy to system clipboard
 
-On a Mac:
+The generated password will be copied to the clipboard automatically.
 ```
-genpass | pbcopy
-```
-On Linux:
-```
-genpass | xclip -selection clipboard
+genpass
 ```
 
 
 ## Installation
-On a system with [Rust](https://www.rust-lang.org/en-US/) installed:
-```
-$ cargo install genpass
-```
+Download from the release page.
 
 ## Commandline options
 ```
 $ genpass --help
 
+genpass 1.0.0
+
 USAGE:
-genpass [FLAGS] [length]
+    genpass [FLAGS] [length]
 
 FLAGS:
--h, --help                 Prints help information
--d, --include-digit        Include at least one digit
--l, --include-lowercase    Include at least one lowercase letter
--s, --include-special      Include at least one special (non-alphanumeric) character
--u, --include-uppercase    Include at least one uppercase letter
---passphrase           Create a passphrase of (at least) the given length instead of a password.
---version
+    -h, --help                 Prints help information
+    -d, --include-digit        Include at least one digit
+    -e, --include-extended     Include at least one character from Latin-1 Supplement, Latin Extended-A or Latin
+                               Extended-B
+    -l, --include-lowercase    Include at least one lowercase letter
+    -s, --include-special      Include at least one special (non-alphanumeric) character
+    -u, --include-uppercase    Include at least one uppercase letter
+    -p, --passphrase           Create a passphrase of (at least) the given length instead of a password.
+        --version
 
 ARGS:
-<length>    The length of the password to generate [default: 32]
+    <length>    The length of the password to generate [default: 50]
 ```
 
 ### A note on passphrases
 * Passphrases are generated using [EFF's](https://www.eff.org/deeplinks/2016/07/new-wordlists-random-passphrases) "long" password list.
 * Passphrases are at least `--length` characters long, not necessarily exactly that long.
 
-## A road to 1.0
-
-TODOs to get `genpass` to 1.0
-
+## TODOs
 * [support custom sets of characters](https://github.com/cyplo/genpass/issues/4)
 * [add benchmarks](https://github.com/cyplo/genpass/issues/5)
 
