@@ -27,5 +27,10 @@ fn main() {
     }
 
     let generation_options = commandline::generation_options_for_commandline_options(options);
-    println!("{}", generate(generation_options, &mut OsRng));
+    let result = generate(generation_options, &mut OsRng);
+    use clipboard::{ClipboardContext, ClipboardProvider};
+    let mut clipboard: ClipboardContext = ClipboardProvider::new().unwrap();
+
+    println!("{}",  &result);
+    clipboard.set_contents(result).unwrap();
 }

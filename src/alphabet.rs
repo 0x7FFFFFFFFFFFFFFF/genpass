@@ -2,23 +2,19 @@ use bitflags::bitflags;
 
 bitflags! {
     pub struct Alphabets:u8 {
-        const LOWERCASE = 0b0001;
-        const UPPERCASE = 0b0010;
-        const DIGIT     = 0b0100;
-        const SPECIAL   = 0b1000;
+        const LOWERCASE = 0b00000001;
+        const UPPERCASE = 0b00000010;
+        const DIGIT     = 0b00000100;
+        const SPECIAL   = 0b00001000;
+        const EXTENDED  = 0b00010000;
     }
 }
 
-impl Default for Alphabets {
-    fn default() -> Self {
-        Alphabets::all()
-    }
-}
-
-const LOWERCASE_CHARS: &str = "abcdefghijklmnopqrstuvwxyz";
-const UPPERCASE_CHARS: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const DIGITS_CHARS: &str = "1234567890";
-const SPECIAL_CHARS: &str = "~!@#$%^&*()-=_+{}[]|\';/.,?><";
+const LOWERCASE_CHARS:    &str = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcde";
+const UPPERCASE_CHARS:    &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDE";
+const DIGITS_CHARS:       &str = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567";
+const SPECIAL_CHARS:      &str = "~!@#$%^&*()-=_+{}[]|\';/.,?><~!@#$%^&*()-=_+{}[]|\';/.,?><~!@#$%^&*()-=_+{}[]|\';/.,?><~!@#$%^&*()-=_+{}[]|\';/.,?><~!@#$%^&*()-=_+{}[]|\';/.,?><~!@#$%^&*()-=_+{}[]|\';/.,?><~!@#$%^&*()-=_+{}[]|\';/.,?><~!@#$%^&*()-=_+{}[]|\';/.,?><~!@#$%^&*()-=_+{}[]|\';/.,?><~!@#$%^&*()-=_+{}[]|\';/.,?><~!@#$%^&*()-=_+{}[]|\';/.,?";
+pub const EXTENDED_CHARS: &str = "¿ǃ¢£¤¥±«»×÷ǁǂ§©¬®°µ¶·¼½¾¹ƻ²³ƽƼªáÁàÀâÂäÄǎǍăĂāĀãÃåÅąĄǡǠǻǺǟǞæÆǽǼǣǢƀƁƃƂƅƄćĆċĊĉĈčČçÇƈƇƆďĎđĐƌƋƊðÐƍǆǅǄƉéÉèÈėĖêÊëËěĚĕĔēĒęĘǝƎƏƐƒƑǵġĠĝĜǧǦğĞģĢǥǤƓƔĥĤħĦƕƗƖĳĲȷĵĴǰĸǩǨķĶƙƘļĻƚłŁƛǉǈǇƜńŃǹǸňŇñÑņŅƝŉƞǌǋǊŋŊºóÓòÒôÔöÖǒǑŏŎōŌõÕǫǪőŐƟøØǿǾǭǬơƠƣƢœŒƥƤƦŕŔřŘŗŖśŚŝŜšŠşŞșȘƩƨƧƪßſťŤţŢƭƬƫƮțȚþÞŧŦúÚùÙûÛüÜǔǓŭŬūŪũŨůŮųŲűŰɄǘǗǜǛǚǙǖǕưƯƱƲŵŴƿýÝŷŶÿŸƴƳźŹżŻžŽƶƵƷǯǮƹƸƺƾ";
 
 pub fn generate_alphabet(subalphabets: Alphabets) -> Vec<char> {
     let mut resulting_alphabet = Vec::new();
@@ -34,14 +30,17 @@ pub fn generate_alphabet(subalphabets: Alphabets) -> Vec<char> {
     if subalphabets.contains(Alphabets::SPECIAL) {
         resulting_alphabet.extend(SPECIAL_CHARS.chars());
     }
+    if subalphabets.contains(Alphabets::EXTENDED) {
+        resulting_alphabet.extend(EXTENDED_CHARS.chars());
+    }
     resulting_alphabet
 }
 
 #[cfg(test)]
 mod must {
+    use std::convert::From;
 
     use super::*;
-    use std::convert::From;
 
     #[test]
     fn have_all_different_cases_of_letters() {

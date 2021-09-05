@@ -1,7 +1,7 @@
-use crate::alphabet::generate_alphabet;
 use crate::alphabet::Alphabets;
+use crate::alphabet::generate_alphabet;
 
-const MINIMUM_PASSWORD_LENGTH: usize = 4;
+const MINIMUM_PASSWORD_LENGTH: usize = 5;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Source {
@@ -40,7 +40,7 @@ pub fn generate<Rng: rand::Rng>(options: GenerationOptions, rng: &mut Rng) -> St
             let mut passphrase = String::with_capacity(length);
             loop {
                 passphrase.push_str(eff_wordlist::large::random_word());
-                if passphrase.len() >= length {
+                if passphrase.chars().count() >= length {
                     return passphrase;
                 }
                 passphrase.push(' ');
@@ -55,10 +55,12 @@ fn generate_password_from_alphabet<Rng: rand::Rng>(
     alphabet: &[char],
 ) -> String {
     let mut password = String::with_capacity(length);
-    while password.len() < length {
+    let mut size = 0;
+    while size < length {
         let next_character_index = rng.next_u32() as usize % alphabet.len();
         let next_character = alphabet[next_character_index];
         password.push(next_character);
+        size += 1;
     }
     password
 }
@@ -85,21 +87,28 @@ fn meets_criteria(alphabets: Alphabets, password_candidate: &str) -> bool {
             .chars()
             .any(|character| !character.is_alphanumeric());
     }
+    if alphabets.contains(Alphabets::EXTENDED) {
+        meets_criteria &= password_candidate
+            .chars()
+            .any(|character| crate::alphabet::EXTENDED_CHARS.contains(character));
+    }
     meets_criteria
 }
 
 #[cfg(test)]
 mod must {
-    use super::*;
-    use crate::commandline::test::default_commandline_options;
-    use proptest::prelude::*;
-    use proptest::*;
-    use zxcvbn::zxcvbn;
+    use std::ops::Range;
 
+    use proptest::*;
+    use proptest::prelude::*;
     use rand::rngs::OsRng;
     use rand::rngs::StdRng;
     use rand::SeedableRng;
-    use std::ops::Range;
+    use zxcvbn::zxcvbn;
+
+    use crate::commandline::test::default_commandline_options;
+
+    use super::*;
 
     const MAXIMUM_TESTABLE_PASSWORD_LENGTH: usize = MINIMUM_PASSWORD_LENGTH * 8;
     const TESTABLE_PASSWORD_RANGE: Range<usize> =

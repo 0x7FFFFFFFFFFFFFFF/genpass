@@ -1,6 +1,7 @@
+use structopt::StructOpt;
+
 use crate::alphabet::Alphabets;
 use crate::generator::{GenerationOptions, Source};
-use structopt::StructOpt;
 
 #[derive(Copy, Clone, StructOpt, Debug)]
 #[structopt(name = "genpass")]
@@ -9,47 +10,55 @@ pub struct CommandlineOptions {
     pub print_version: bool,
 
     #[structopt(
-        long = "length",
-        help = "The length of the password to generate",
-        default_value = "32",
-        index = 1
+    long = "length",
+    help = "The length of the password to generate",
+    default_value = "50",
+    index = 1
     )]
     pub length: usize,
 
     #[structopt(
-        long = "passphrase",
-        help = "Create a passphrase of (at least) the given length instead of a password."
+    short = "p",
+    long = "passphrase",
+    help = "Create a passphrase of (at least) the given length instead of a password."
     )]
     passphrase: bool,
 
     #[structopt(
-        short = "l",
-        long = "include-lowercase",
-        help = "Include at least one lowercase letter",
-        conflicts_with = "passphrase"
+    short = "l",
+    long = "include-lowercase",
+    help = "Include at least one lowercase letter",
+    conflicts_with = "passphrase"
     )]
     include_lowercase: bool,
     #[structopt(
-        short = "u",
-        long = "include-uppercase",
-        help = "Include at least one uppercase letter",
-        conflicts_with = "passphrase"
+    short = "u",
+    long = "include-uppercase",
+    help = "Include at least one uppercase letter",
+    conflicts_with = "passphrase"
     )]
     include_uppercase: bool,
     #[structopt(
-        short = "d",
-        long = "include-digit",
-        help = "Include at least one digit",
-        conflicts_with = "passphrase"
+    short = "d",
+    long = "include-digit",
+    help = "Include at least one digit",
+    conflicts_with = "passphrase"
     )]
     include_digit: bool,
     #[structopt(
-        short = "s",
-        long = "include-special",
-        help = "Include at least one special (non-alphanumeric) character",
-        conflicts_with = "passphrase"
+    short = "s",
+    long = "include-special",
+    help = "Include at least one special (non-alphanumeric) character",
+    conflicts_with = "passphrase"
     )]
     include_special: bool,
+    #[structopt(
+    short = "e",
+    long = "include-extended",
+    help = "Include at least one character from Latin-1 Supplement, Latin Extended-A or Latin Extended-B",
+    conflicts_with = "passphrase"
+    )]
+    include_extended: bool,
 }
 
 pub fn generation_options_for_commandline_options(
@@ -71,8 +80,11 @@ pub fn generation_options_for_commandline_options(
         if options.include_special {
             alphabets |= Alphabets::SPECIAL;
         }
+        if options.include_extended {
+            alphabets |= Alphabets::EXTENDED;
+        }
         if alphabets.is_empty() {
-            alphabets = Alphabets::all();
+            alphabets = Alphabets::all() - Alphabets::EXTENDED;
         }
         Source::Alphabets(alphabets)
     };
@@ -94,10 +106,10 @@ pub mod test {
 
 #[cfg(test)]
 mod must {
-
-    use super::test::*;
-    use super::*;
     use crate::generator::Source::Words;
+
+    use super::*;
+    use super::test::*;
 
     #[test]
     fn support_lowercase_letters() {
