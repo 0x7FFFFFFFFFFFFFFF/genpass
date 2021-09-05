@@ -3,7 +3,7 @@ use structopt::StructOpt;
 use crate::alphabet::Alphabets;
 use crate::generator::{GenerationOptions, Source};
 
-#[derive(Copy, Clone, StructOpt, Debug)]
+#[derive(Clone, StructOpt, Debug)]
 #[structopt(name = "genpass")]
 pub struct CommandlineOptions {
     #[structopt(long = "version")]
@@ -31,6 +31,7 @@ pub struct CommandlineOptions {
     conflicts_with = "passphrase"
     )]
     include_lowercase: bool,
+
     #[structopt(
     short = "u",
     long = "include-uppercase",
@@ -38,6 +39,7 @@ pub struct CommandlineOptions {
     conflicts_with = "passphrase"
     )]
     include_uppercase: bool,
+
     #[structopt(
     short = "d",
     long = "include-digit",
@@ -45,6 +47,7 @@ pub struct CommandlineOptions {
     conflicts_with = "passphrase"
     )]
     include_digit: bool,
+
     #[structopt(
     short = "s",
     long = "include-special",
@@ -52,6 +55,7 @@ pub struct CommandlineOptions {
     conflicts_with = "passphrase"
     )]
     include_special: bool,
+
     #[structopt(
     short = "e",
     long = "include-extended",
@@ -59,28 +63,51 @@ pub struct CommandlineOptions {
     conflicts_with = "passphrase"
     )]
     include_extended: bool,
+
+    #[structopt(
+    short = "x",
+    long = "exclude",
+    default_value = "",
+    help = "These characters will be excluded",
+    )]
+    exclude_characters: String,
+
+    #[structopt(
+    short = "a",
+    long = "all-character-types",
+    help = r#"Equals to "-dulse""#,
+    conflicts_with = "passphrase"
+    )]
+    all_character_types: bool,
 }
 
 pub fn generation_options_for_commandline_options(
-    options: CommandlineOptions,
+    args: CommandlineOptions,
 ) -> GenerationOptions {
-    let source = if options.passphrase {
+    let source = if args.passphrase {
         Source::Words
     } else {
         let mut alphabets = Alphabets::empty();
-        if options.include_lowercase {
+        if args.include_lowercase {
             alphabets |= Alphabets::LOWERCASE;
         }
-        if options.include_uppercase {
+        if args.include_uppercase {
             alphabets |= Alphabets::UPPERCASE;
         }
-        if options.include_digit {
+        if args.include_digit {
             alphabets |= Alphabets::DIGIT;
         }
-        if options.include_special {
+        if args.include_special {
             alphabets |= Alphabets::SPECIAL;
         }
-        if options.include_extended {
+        if args.include_extended {
+            alphabets |= Alphabets::EXTENDED;
+        }
+        if args.all_character_types {
+            alphabets |= Alphabets::LOWERCASE;
+            alphabets |= Alphabets::UPPERCASE;
+            alphabets |= Alphabets::DIGIT;
+            alphabets |= Alphabets::SPECIAL;
             alphabets |= Alphabets::EXTENDED;
         }
         if alphabets.is_empty() {
@@ -89,7 +116,7 @@ pub fn generation_options_for_commandline_options(
         Source::Alphabets(alphabets)
     };
     GenerationOptions {
-        length: options.length,
+        length: args.length,
         source,
     }
 }
