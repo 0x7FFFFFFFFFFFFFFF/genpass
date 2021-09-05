@@ -2,6 +2,9 @@
 
 This is a fork from [https://builds.sr.ht/~cyplo/genpass](https://builds.sr.ht/~cyplo/genpass). The following description is for this forked version.
 
+![demo](https://github.com/0x7FFFFFFFFFFFFFFF/genpass/raw/master/genpass.gif "")
+
+
 A simple, robust, fast, multiplatform commandline random password generator.
 
 You can use it generate keys or passwords in scripts or use it as your primary desktop password generator.
