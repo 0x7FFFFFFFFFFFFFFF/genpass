@@ -79,6 +79,14 @@ pub struct CommandlineOptions {
     conflicts_with = "passphrase"
     )]
     all_character_types: bool,
+
+    #[structopt(
+    short = "m",
+    long = "include",
+    default_value = "empty string",
+    help = "Must include one of these characters",
+    )]
+    must_include_one_of: String,
 }
 
 pub fn get_password_generation_options(
@@ -115,10 +123,20 @@ pub fn get_password_generation_options(
         }
         Source::Alphabets(alphabets)
     };
+
     GenerationOptions {
         length: args.length,
         source,
-        exclude_chars: args.exclude_characters,
+        exclude_chars: if args.exclude_characters == "empty string" {
+            "".to_string()
+        } else {
+            args.exclude_characters
+        },
+        include_chars: if args.must_include_one_of == "empty string" {
+            "".to_string()
+        } else {
+            args.must_include_one_of
+        },
     }
 }
 

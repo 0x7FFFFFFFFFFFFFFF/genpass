@@ -14,6 +14,7 @@ pub struct GenerationOptions {
     pub length: usize,
     pub source: Source,
     pub exclude_chars: String,
+    pub include_chars: String,
 }
 
 pub fn generate_password<Rng: rand::Rng>(options: GenerationOptions, rng: &mut Rng) -> String {
@@ -28,7 +29,7 @@ pub fn generate_password<Rng: rand::Rng>(options: GenerationOptions, rng: &mut R
     match options.source {
         Source::Alphabets(alphabets) => {
             let alphabet = generate_alphabet(alphabets);
-            return generate_password_from_alphabet(options.length, rng, &alphabet, &options.exclude_chars);
+            return generate_password_from_alphabet(options.length, rng, &alphabet, &options.exclude_chars, &options.include_chars);
         }
         Source::Words => {
             let mut passphrase = String::with_capacity(length);
@@ -48,6 +49,7 @@ fn generate_password_from_alphabet<Rng: rand::Rng>(
     rng: &mut Rng,
     alphabet: &[char],
     excluded_chars: &str,
+    include_chars: &str,
 ) -> String {
     let mut password = String::with_capacity(length);
     let mut size = 0;
@@ -59,6 +61,14 @@ fn generate_password_from_alphabet<Rng: rand::Rng>(
         }
         password.push(next_character);
         size += 1;
+    }
+
+    if include_chars.len() > 0 && !password.chars().any(|c| include_chars.contains(c))
+    {
+        let password_index = rng.next_u32() as usize % length;
+        let include_chars_index = rng.next_u32() as usize % include_chars.chars().count();
+
+        password.replace_range(password_index..=password_index, &include_chars.chars().nth(include_chars_index).unwrap().to_string())
     }
     password
 }
