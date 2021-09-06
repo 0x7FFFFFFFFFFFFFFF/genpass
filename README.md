@@ -11,6 +11,10 @@ You can use it generate keys or passwords in scripts or use it as your primary d
 
 Has extensive generative test suite, including tests against a [Rust port](https://crates.io/crates/zxcvbn) of Dropbox's password strength tester [`zxcvbn`](https://www.usenix.org/conference/usenixsecurity16/technical-sessions/presentation/wheeler)
 
+## Update (9/6/2021)
+* Added `-x` option to exclude characters in a user defined string.
+* Added `-m` option to let the user to provide a string and at lease one of the character of it will be included in the generated password.
+
 ## Typical usage
 ```
 genpass                  # use defaults, they're good
@@ -34,21 +38,26 @@ Download from the release page.
 ```
 $ genpass --help
 
-genpass 1.0.0
+genpass 1.1.0
 
 USAGE:
-    genpass [FLAGS] [length]
+    genpass.exe [FLAGS] [OPTIONS] [length]
 
 FLAGS:
-    -h, --help                 Prints help information
-    -d, --include-digit        Include at least one digit
-    -e, --include-extended     Include at least one character from Latin-1 Supplement, Latin Extended-A or Latin
-                               Extended-B
-    -l, --include-lowercase    Include at least one lowercase letter
-    -s, --include-special      Include at least one special (non-alphanumeric) character
-    -u, --include-uppercase    Include at least one uppercase letter
-    -p, --passphrase           Create a passphrase of (at least) the given length instead of a password.
+    -a, --all-character-types    Equals to "-dulse"
+    -h, --help                   Prints help information
+    -d, --include-digit          Include at least one digit
+    -e, --include-extended       Include at least one character from Latin-1 Supplement, Latin Extended-A or Latin
+                                 Extended-B
+    -l, --include-lowercase      Include at least one lowercase letter
+    -s, --include-special        Include at least one special (non-alphanumeric) character
+    -u, --include-uppercase      Include at least one uppercase letter
+    -p, --passphrase             Create a passphrase of (at least) the given length instead of a password.
         --version
+
+OPTIONS:
+    -x, --exclude <exclude-characters>     These characters will be excluded [default: empty string]
+    -m, --include <must-include-one-of>    Must include one of these characters [default: empty string]
 
 ARGS:
     <length>    The length of the password to generate [default: 50]
