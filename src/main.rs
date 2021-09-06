@@ -5,7 +5,7 @@ mod alphabet;
 mod commandline;
 mod generator;
 
-use crate::generator::generate;
+use crate::generator::generate_password;
 use structopt::StructOpt;
 
 fn main() {
@@ -16,8 +16,8 @@ fn main() {
         return;
     }
 
-    let generation_options = commandline::generation_options_for_commandline_options(options);
-    let result = generate(generation_options, &mut OsRng);
+    let password_generation_options = commandline::get_password_generation_options(options);
+    let result = generate_password(password_generation_options, &mut OsRng);
     use clipboard::{ClipboardContext, ClipboardProvider};
     let mut clipboard: ClipboardContext = ClipboardProvider::new().unwrap();
 
